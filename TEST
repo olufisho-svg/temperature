@@ -1,0 +1,44 @@
+print("Enhanced Calculator 2026")
+
+while True:
+    print("\nChoose an operation:")
+    print("+  Addition")
+    print("-  Subtraction")
+    print("*  Multiplication")
+    print("/  Division")
+
+    operation = input("Enter operation: ")
+
+    numbers = input("Enter numbers separated by spaces: ")
+    nums = list(map(float, numbers.split()))
+
+    if operation == "+":
+        result = sum(nums)
+
+    elif operation == "-":
+        result = nums[0]
+        for num in nums[1:]:
+            result -= num
+
+    elif operation == "*":
+        result = 1
+        for num in nums:
+            result *= num
+
+    elif operation == "/":
+        result = nums[0]
+        try:
+            for num in nums[1:]:
+                result /= num
+        except ZeroDivisionError:
+            result = "Error: Cannot divide by zero"
+
+    else:
+        result = "Invalid operation"
+
+    print("Result:", result)
+
+    again = input("\nDo you want to calculate again? (yes/no): ")
+    if again.lower() != "yes":
+        print("Calculator closed ")
+        break
