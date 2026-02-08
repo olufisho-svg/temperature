@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Math & French Quiz</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .quiz-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        #question {
+            font-size: 1.4em;
+            color: #333;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            min-height: 60px;
+        }
+
+        .answer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .answer-btn {
+            background: white;
+            border: 2px solid #667eea;
+            color: #667eea;
+            padding: 15px 25px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .answer-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .answer-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .answer-btn.correct {
+            background: #4caf50;
+            border-color: #4caf50;
+            color: white;
+        }
+
+        .answer-btn.incorrect {
+            background: #f44336;
+            border-color: #f44336;
+            color: white;
+        }
+
+        #result {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+            margin: 20px 0;
+            min-height: 30px;
+        }
+
+        #result.correct {
+            color: #4caf50;
+        }
+
+        #result.incorrect {
+            color: #f44336;
+        }
+
+        .score-display {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.1em;
+            margin-top: 20px;
+        }
+
+        .next-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .next-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .final-results {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .final-results h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 2em;
+        }
+
+        .final-score {
+            font-size: 3em;
+            color: #764ba2;
+            margin: 20px 0;
+        }
+
+        .restart-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .emoji {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Math & French Quiz 🇫🇷➕</h1>
+       
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressBar"></div>
+        </div>
+       
+        <div class="question-info">
+            <span id="questionNumber"></span>
+            <span id="timer"></span>
+        </div>
+       
+        <p id="question"></p>
+       
+        <div class="answer-buttons">
+            <button class="answer-btn" onclick="checkAnswer(0)" id="btn0"></button>
+            <button class="answer-btn" onclick="checkAnswer(1)" id="btn1"></button>
+            <button class="answer-btn" onclick="checkAnswer(2)" id="btn2"></button>
+        </div>
+       
+        <p id="result"></p>
+       
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">
+            Next Question →
+        </button>
+       
+        <div class="score-display">
+            <span id="score">Score: 0 / 0</span>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Math: What is 5 + 7?",
+                answers: ["10", "12", "14"],
+                correct: 1
+            },
+            {
+                question: "French: What does 'bonjour' mean?",
+                answers: ["Goodbye", "Please", "Hello"],
+                correct: 2
+            },
+            {
+                question: "Math: What is 9 × 3?",
+                answers: ["27", "18", "21"],
+                correct: 0
+            },
+            {
+                question: "French: What is 'chat' in English?",
+                answers: ["Dog", "Cat", "Bird"],
+                correct: 1
+            },
+            {
+                question: "Math: What is 15 - 8?",
+                answers: ["7", "6", "8"],
+                correct: 0
+            },
+            {
+                question: "French: What does 'merci' mean?",
+                answers: ["Sorry", "Thank you", "Goodbye"],
+                correct: 1
+            },
+            {
+                question: "Math: What is 4 × 4?",
+                answers: ["12", "16", "20"],
+                correct: 1
+            },
+            {
+                question: "French: What is 'chien' in English?",
+                answers: ["Cat", "Bird", "Dog"],
+                correct: 2
+            },
+            {
+                question: "Math: What is 20 ÷ 4?",
+                answers: ["5", "4", "6"],
+                correct: 0
+            },
+            {
+                question: "French: What does 'au revoir' mean?",
+                answers: ["Hello", "Goodbye", "Please"],
+                correct: 1
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let answered = false;
+
+        function loadQuestion() {
+            answered = false;
+            const q = questions[currentQuestion];
+           
+            document.getElementById('question').textContent = q.question;
+            document.getElementById('btn0').textContent = q.answers[0];
+            document.getElementById('btn1').textContent = q.answers[1];
+            document.getElementById('btn2').textContent = q.answers[2];
+           
+            // Reset button states
+            const buttons = document.querySelectorAll('.answer-btn');
+            buttons.forEach(btn => {
+                btn.disabled = false;
+                btn.classList.remove('correct', 'incorrect');
+            });
+           
+            // Clear result
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = '';
+           
+            // Hide next button
+            document.getElementById('nextBtn').style.display = 'none';
+           
+            // Update question number
+            document.getElementById('questionNumber').textContent =
+                `Question ${currentQuestion + 1} of ${questions.length}`;
+           
+            // Update progress bar
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+           
+            // Update score display
+            updateScoreDisplay();
+        }
+
+        function checkAnswer(selected) {
+            if (answered) return;
+           
+            answered = true;
+            const q = questions[currentQuestion];
+            const buttons = document.querySelectorAll('.answer-btn');
+            const resultElement = document.getElementById('result');
+           
+            // Disable all buttons
+            buttons.forEach(btn => btn.disabled = true);
+           
+            if (selected === q.correct) {
+                score++;
+                buttons[selected].classList.add('correct');
+                resultElement.textContent = '✓ Correct! Well done! 🎉';
+                resultElement.className = 'correct';
+            } else {
+                buttons[selected].classList.add('incorrect');
+                buttons[q.correct].classList.add('correct');
+                resultElement.textContent = `✗ Incorrect. The correct answer was: ${q.answers[q.correct]}`;
+                resultElement.className = 'incorrect';
+            }
+           
+            updateScoreDisplay();
+           
+            // Show next button or finish quiz
+            if (currentQuestion < questions.length - 1) {
+                document.getElementById('nextBtn').style.display = 'block';
+            } else {
+                setTimeout(showFinalResults, 1500);
+            }
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            loadQuestion();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score').textContent =
+                `Score: ${score} / ${currentQuestion + (answered ? 1 : 0)}`;
+        }
+
+        function showFinalResults() {
+            const percentage = (score / questions.length) * 100;
+            let emoji = '🎉';
+            let message = 'Excellent work!';
+           
+            if (percentage === 100) {
+                emoji = '🏆';
+                message = 'Perfect Score!';
+            } else if (percentage >= 80) {
+                emoji = '🌟';
+                message = 'Great job!';
+            } else if (percentage >= 60) {
+                emoji = '👍';
+                message = 'Good effort!';
+            } else {
+                emoji = '📚';
+                message = 'Keep practicing!';
+            }
+           
+            const container = document.querySelector('.quiz-container');
+            container.innerHTML = `
+                <div class="final-results">
+                    <h2>Quiz Complete!</h2>
+                    <div class="emoji">${emoji}</div>
+                    <h3>${message}</h3>
+                    <div class="final-score">${score} / ${questions.length}</div>
+                    <p style="font-size: 1.5em; color: #666; margin: 20px 0;">
+                        ${percentage.toFixed(0)}%
+                    </p>
+                    <button class="restart-btn" onclick="restartQuiz()">
+                        🔄 Try Again
+                    </button>
+                </div>
+            `;
+           
+            // Complete progress bar
+            document.getElementById('progressBar').style.width = '100%';
+        }
+
+        function restartQuiz() {
+            currentQuestion = 0;
+            score = 0;
+            answered = false;
+           
+            const container = document.querySelector('.quiz-container');
+            container.innerHTML = `
+                <h1>Math & French Quiz 🇫🇷➕</h1>
+               
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+               
+                <div class="question-info">
+                    <span id="questionNumber"></span>
+                    <span id="timer"></span>
+                </div>
+               
+                <p id="question"></p>
+               
+                <div class="answer-buttons">
+                    <button class="answer-btn" onclick="checkAnswer(0)" id="btn0"></button>
+                    <button class="answer-btn" onclick="checkAnswer(1)" id="btn1"></button>
+                    <button class="answer-btn" onclick="checkAnswer(2)" id="btn2"></button>
+                </div>
+               
+                <p id="result"></p>
+               
+                <button class="next-btn" id="nextBtn" onclick="nextQuestion()" style="display: none;">
+                    Next Question →
+                </button>
+               
+                <div class="score-display">
+                    <span id="score">Score: 0 / 0</span>
+                </div>
+            `;
+           
+            loadQuestion();
+        }
+
+        // Start the quiz when page loads
+        loadQuestion();
+    </script>
+</body>
+</html>
